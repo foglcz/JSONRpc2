@@ -1,0 +1,15 @@
+<?php
+/**
+ * This file is part of The Lightbulb Project
+ * 
+ * Copyright 2011 Pavel Ptacek and Animal Group
+ * 
+ * @author Pavel Ptacek <birdie at animalgroup dot cz>
+ * @copyright Pavel Ptacek and Animal Group <www dot animalgroup dot cz>
+ * @license New BSD License
+ */
+
+if(!class_exists('InvalidStateException')) {
+    class InvalidStateException extends Exception {}
+}
+
