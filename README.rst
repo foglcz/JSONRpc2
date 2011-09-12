@@ -6,23 +6,23 @@ The library consist of both server and client implementations.
 
 Both server and client supports for "dots magic". That is, every method called
 using the RPC classes can contain dots. The dots then separates individual
-objects. ie:
+objects. ie::
 
  $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
  $client->first->second->third($arg);
 
-will actually result in following json call:
+will actually result in following json call::
 
  {... method: "first.second.third" ...}
 
 With server, you just define the variable with a class. Eg. "user.login" and
-"user.stuff" can be achieved like this:
+"user.stuff" can be achieved like this::
 
  $server = new Lightbulb\Json\Rpc2\Server;
  $server->user = new MyJsonUserHandler;
 
 This is particulary handy in order to separate individual methods within robust APIs.
-Handlers can be individual methods as well. Feel free to do anything of the following:
+Handlers can be individual methods as well. Feel free to do anything of the following::
 
     $server->myTest = new MyTestHandler; // contains mytest.* methods
     $server->myFunction = function($param1, $param2) { /* ... */ };
@@ -34,9 +34,13 @@ or named parameters (see json-rpc specification here: http://groups.google.com/g
 
 Methods can have optional arguments:
 
+::
+
     $server->user->login = function($email, $password, $permanent = false)
 
 The server class respects binding of event methods:
+
+::
 
     // Bind events
     $server->onBeforeCall[] = function($server) {};
@@ -68,11 +72,11 @@ That awesome framework can be obtained at http://www.nette.org
 
 Known bugs
 ==========
-Due to the nature of PHP, when you use optional argument of method like this:
+Due to the nature of PHP, when you use optional argument of method like this::
 
     $server->user->store($object = null)
 
-you cannot then use "exact resolution operator" === . Hence, only following is applicable:
+you cannot then use "exact resolution operator" === . Hence, only following is applicable::
 
     if($object != null) // note the "!="
 
