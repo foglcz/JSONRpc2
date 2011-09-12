@@ -1,0 +1,7 @@
+{var $keyVal = sprintf($keyName, $key)}
+{var $keyChk = sprintf($keyName, '_checkbox_' . $key)}
+{var $sendVal = sprintf($sendName, $key)}
+<label>{$key}:</label>
+<input type="checkbox" name="{$keyVal}" {if !empty($_POST[$keyVal]) && $_POST[$keyVal] == $one} selected="selected"{/if} value="1" />
+<input name="{$sendVal}" value="1" type="checkbox" class="chk" checked="checked" />
+<input type="hidden" name="{$keyChk}" value="1" />

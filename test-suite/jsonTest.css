@@ -1,0 +1,28 @@
+h1,h2,h3,h4,h5,h6,form,body,html,p { margin:0; padding:0; list-style-type:none; border:none; }
+
+body { text-align: left; font: .9em Arial; padding-bottom: 40px; }
+
+.clear { clear: both; }
+
+h2 { margin-top: 25px; font: 1em "Courier New"; font-weight: bold; }
+
+#footer { position: fixed; bottom: 0; width: 100%; height: 40px; background-color: #657e20; color: #fff; z-index: 100; opacity: .8; }
+#footer a { color: #fff; }
+#footer a:hover { color: #aaa; }
+#footer .left { float: left; margin: 14px 0 0 40px; }
+#footer .right { float: right; margin: 14px 40px 0 0; }
+
+header, #content { padding: 10px; }
+
+form { margin-top: 10px; margin-bottom: 10px; }
+form fieldset { float: left; margin-left: 10px; margin-top: 10px; border: 1px solid black; }
+form fieldset input, form fieldset select { border-color: #ccc; }
+form label { font: .9em "Courier New"; display: block; float: left; width: 150px; padding: 5px; padding-top: 8px; text-align: right; clear: left; }
+form input, form select { font: .9em "Courier New"; display: block; float: left; margin-left: 10px; margin-top: 5px; padding: 2px 5px; border: 1px solid black; width: 230px; }
+form button { display: block; width: 400px; border: 1px solid black; background-color: #aaa; clear: left; float: left; margin: 10px; }
+
+/* generic test page */
+#request { border: 1px dashed black; padding: 10px; float: left; clear: left; background-color: #F4CDBE; }
+#response { border: 1px dashed black; margin-left: 25px; float: left; padding: 10px; background-color: #ff9; }
+code { font: .9em "Courier New"; }
+input.chk { width: auto; margin-top: 8px; }

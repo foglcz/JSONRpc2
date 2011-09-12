@@ -1,0 +1,7 @@
+{var $keyVal = sprintf($keyName, $key)}
+{var $sendVal = sprintf($sendName, $key)}
+<label>{$key}:</label>
+{for $i = 1; $i <= 5; ++$i}
+    <input type="text" name="{$keyVal}[json_{$i}]" value="{if !empty($_POST[$keyVal][$i])}{$_POST[$keyVal][$i]}{/if}" style="width: 20px;" />
+    <input name="{$sendVal}[json_{$i}]" value="1" type="checkbox" class="chk" checked="checked" />
+{/for}

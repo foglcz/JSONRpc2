@@ -1,0 +1,17 @@
+{block title}{$currentModule}.{strtolower($presenter->getAction())}{/block}
+{block content}
+
+
+{include '../Prototypes/form.latte' data => $formData}
+
+{if isset($jsonRequest) && isset($jsonResponse)}
+<code id="request">
+    <strong>request:</strong><br />
+    <pre>{$jsonRequest}</pre>
+</code>
+<code id="response">
+    <strong>response:</strong><br />
+    <pre>{$jsonResponse}</pre>
+</code>
+{/if}
+<br class="clear" />

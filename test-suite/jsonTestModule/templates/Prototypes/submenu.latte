@@ -1,0 +1,6 @@
+<p>
+{foreach $modules as $module}
+    <a n:href="$module['link']">{$module['name']}</a>
+    {sep} | {/sep}
+{/foreach}
+</p>

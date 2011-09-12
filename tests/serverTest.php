@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/server.php';
+require_once __DIR__ . '/../lib/Server.php';
 
 // Instantiate
 $server = new Lightbulb\Json\Rpc2\Server;

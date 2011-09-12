@@ -11,7 +11,7 @@
 
 namespace Lightbulb\Json\Rpc2;
 
-require_once __DIR__ . 'exceptions.php';
+require_once __DIR__ . '/exceptions.php';
 
 /**
  * This is JSON-RPCv2 server handler class
@@ -120,6 +120,9 @@ final class Server {
     /** @var array of server callbacks */
     private $_server;
     
+    /** @var array of errors during execution outside scope of the server */
+    private $_errors = array();
+    
     /**
      * Get reflection for the function
      * 
@@ -167,7 +170,7 @@ final class Server {
      * Check validity of the request
      * 
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     private function _checkRequest($request) {
         // If batch request, everything is ok
@@ -228,7 +231,7 @@ final class Server {
                 // The magic happens
                 $return = $this->__call($one->method, $one->params);
                 
-                // Notifications do not have response
+                // No response for no id -> it's a notification
                 if(!isset($one->id)) {
                     continue;
                 }
@@ -266,13 +269,13 @@ final class Server {
         }
         
         // Return first response if the request is stdClass with id
-        elseif($request instanceof stdClass && isset($request->id)) {
+        elseif($request instanceof \stdClass && isset($request->id)) {
             return $responses[0];
         }
         
         // Or return nothing
         else {
-            return '';
+            return null;
         }
     }
     
@@ -283,8 +286,8 @@ final class Server {
      * Outputs the data into browser or not - depending on the setup.
      * Also, prepares $this->_output and $this->_rawOutput variables.
      *  
-     * @param \stdClass $response 
-     * @return \stdClass the response object
+     * @param stdClass $response 
+     * @return stdClass the response object
      */
     private function _end($response) {
         $this->_output = $response;
@@ -419,6 +422,10 @@ final class Server {
                     $pass[] = $args->{$param->getName()};
                 }
                 else {
+                    if(!$param->isOptional()) {
+                        throw new \Exception('Invalid params', -32602);
+                    }
+
                     $pass[] = $param->getDefaultValue();
                 }
             }
@@ -429,6 +436,12 @@ final class Server {
         // No arguments?
         if(empty($args)) {
             $args = array();
+        }
+        
+        // Check the ammount of arguments
+        $wanted = $method['reflection']->getNumberOfRequiredParameters();
+        if($wanted > count($args)) {
+            throw new \Exception('Invalid params', -32602);
         }
 
         // Invoke
@@ -476,7 +489,7 @@ final class Server {
      * @param string $name onBeforeCall || onSuccess || onError
      * @param callable $callback 
      * @return Server fluent interface
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function addCallback($name, $callback) {
         $name = strtolower($name);
@@ -496,7 +509,7 @@ final class Server {
      * 
      * @param string $name onBeforeCall || onSuccess || onError
      * @return Server fluent interface
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function clearCallback($name) {
         $name = strtolower($name);
@@ -558,7 +571,7 @@ final class Server {
             $rawPost = file_get_contents('php://input');
             $input = json_decode($rawPost);
             
-            // Client fixture
+            // Some weird stuff going on here
             if(is_string($input)) {
                 $input = json_decode($input);
             }
@@ -570,16 +583,29 @@ final class Server {
             }
         }
         
+        // Setup error handler
+        $handler = set_error_handler(array($this, '_errorHandler'), E_ALL);
+        
         // ------------------------- Execution time ----------------------------
         try {
             $output = $this->_handle($input);
             $this->onSuccess($this);
+
+            if($handler) {
+                set_error_handler($handler);
+            }
+            
             return $this->_end($output);
         }
-        catch(Exception $e) {
+        catch(\Exception $e) {
+            // restore error handler
+            if($handler) {
+                set_error_handler($handler);
+            }
+            
             // Wrap the exception into request
             $error->error->code = $e->getCode();
-            $error->error->message = $e->getMessage();
+            $error->error->message = get_class($e) . ': ' . $e->getMessage();
             $this->onError($this);
             return $this->_end($error);
         }
@@ -589,7 +615,7 @@ final class Server {
      * Gets structured output from the server
      * 
      * @return stdClass
-     * @throws \InvalidStateException
+     * @throws InvalidStateException
      */
     public function getOutput() {
         if(empty($this->_output)) {
@@ -603,7 +629,7 @@ final class Server {
      * Get raw output
      * 
      * @return string
-     * @throws \InvalidStateException
+     * @throws InvalidStateException
      */
     public function getRawOutput() {
         if(empty($this->_rawOutput)) {
@@ -618,5 +644,12 @@ final class Server {
      */
     public function isError() {
         return $this->_isError;
+    }
+    
+    /**
+     * Error handler
+     */
+    public function _errorHandler($severity, $message, $file = null, $line = null, $context = null) {
+        throw new \ErrorException($message . "\n" . 'in file ' . $file . "\n" . 'on line ' . $line, 0, $severity, $file, $line);
     }
 }

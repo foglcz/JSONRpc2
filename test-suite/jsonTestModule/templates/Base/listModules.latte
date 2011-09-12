@@ -1,0 +1,9 @@
+{block title}Modules list{/block}
+{block content}
+<p>Within the json API test suite, we have following modules available:</p>
+
+{foreach $modules as $module}
+    {first}<ul>{/first}
+        <li><a n:href="$module['link']">{$module['name']}</a></li>
+    {last}</ul>{/last}
+{/foreach}

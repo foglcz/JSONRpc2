@@ -1,0 +1,16 @@
+<h2>
+        {$data['method']}
+        (
+        {foreach $data['params'] as $key => $val}
+            {$key}{if $val instanceof stdClass}[{$val->_objectName}]{elseif is_array($val)}[enum]{elseif strpos($val, ':') !== false}[{$val}]{else}[string]{/if}{sep}, {/sep}
+        {/foreach}
+        )
+</h2>
+
+<form action="{link sendJson! method => $data['method']}" method="post">
+    {foreach $data['params'] as $key => $val}
+        {include './form-abstract.latte' key => $key, val => $val, keyName => 'json_%s', sendName => 'send_%s', inClass => false}
+    {/foreach}
+    
+    <button type="submit">call {$data['method']}</button>
+</form>

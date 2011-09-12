@@ -34,8 +34,16 @@ final class JsonPresenter extends BasePresenter {
         // Supress handling of output, as we are sending it differently
         $server->supressOutput();
         
-        // Showtime!
-        $this->sendResponse(new \Nette\Application\Responses\JsonResponse($server->handle()));
+        // When running the request, we need to check whether there has been anything returned. If not, 
+        // then we have to send an empty text response, as Nette\...\JsonResponse throws exception
+        // on empty responses.
+        $response = $server->handle();
+        if(!empty($response) || is_array($response)) { // is_array in order to send []
+            $this->sendResponse(new \Nette\Application\Responses\JsonResponse($response));
+        }
+        else {
+            $this->sendResponse(new \Nette\Application\Responses\TextResponse(''));
+        }
     }
     
     /* test usage within the same presenter */

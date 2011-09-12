@@ -1,0 +1,6 @@
+<p>
+{foreach $methods as $method}
+    <a n:href="$method['link']">{$method['name']}</a>
+    {sep} | {/sep}
+{/foreach}
+</p>

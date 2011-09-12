@@ -1,0 +1,18 @@
+{var $keyVal = sprintf($keyName, $key).'[json_%s]'}
+
+{if $inClass == false}
+    {var $sendVal = sprintf($sendName, $key) . '[send_%s]'}
+    {var $sendValObj = sprintf($sendName, $key)}
+{else}
+    {var $sendVal = sprintf($sendName, $key) . '[send_%s]'}
+    {var $sendValObj = sprintf($sendName, $key)}
+{/if}
+<label>{$val->_objectName}:</label>
+<fieldset>
+    {foreach $val as $key2 => $val2} 
+        {continueIf $key2[0] == '_'}
+    
+        {include './form-abstract.latte' key => $key2, val => $val2, keyName => $keyVal, sendName => $sendVal, inClass => true}
+    {/foreach}
+</fieldset>
+<input name="{sprintf($sendName, $key . '__object')}" value="1" type="checkbox" class="chk" checked="checked" />

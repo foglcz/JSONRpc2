@@ -1,0 +1,11 @@
+{if $val instanceof stdClass}
+    {include './form-object.latte' key => $key, val => $val, keyName => $keyName, sendName => $sendName, inClass => $inClass}
+{elseif is_array($val)}
+    {include './form-select.latte' key => $key, val => $val, keyName => $keyName, sendName => $sendName}
+{elseif is_bool($val)}
+    {include './form-checkbox.latte' key => $key, val => $val, keyName => $keyName, sendName => $sendName}
+{elseif $val == '~array~'}
+    {include './form-array.latte' key => $key, val => $val, keyName => $keyName, sendName => $sendName}
+{else}
+    {include './form-input.latte' key => $key, val => $val, keyName => $keyName, sendName => $sendName}
+{/if}

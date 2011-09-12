@@ -1,0 +1,9 @@
+{block title}{$currentModule}{/block}
+{block content}
+<p><strong>{$currentModule}</strong>:</p>
+
+{foreach $methods as $method}
+    {first}<ul>{/first}
+        <li><a n:href="$method['link']">{$method['name']}</a></li>
+    {last}</ul>{/last}
+{/foreach}

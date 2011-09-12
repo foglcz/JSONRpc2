@@ -1,0 +1,5 @@
+{var $keyVal = sprintf($keyName, $key)}
+{var $sendVal = sprintf($sendName, $key)}
+<label>{$key}:</label>
+<input type="text" name="{$keyVal}" value="{if !empty($_POST[$keyVal])}{$_POST[$keyVal]}{elseif strpos($val, ':') === false}{$val}{/if}" />
+<input name="{$sendVal}" value="1" type="checkbox" class="chk" checked="checked" />

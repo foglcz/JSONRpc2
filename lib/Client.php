@@ -37,14 +37,28 @@ namespace Lightbulb\Json\Rpc2;
  * @author Pavel Ptacek
  */
 class Client {
+    /**
+     * Determines indentation for debugging (self::formatJsonString)
+     */
+    const DEBUG_INDENT = 4;
+    
     /** @var string */
     protected $_endpoint;
+    
+    /** @var bool */
+    protected $_debug;
     
     /** @var array */
     private $_callstack;
     
     /** @var int */
     private $_id;
+    
+    /** @var string */
+    protected $_debugRequest;
+    
+    /** @var string */
+    protected $_debugResponse;
     
     /**
      * Creates json-conforming request
@@ -67,7 +81,7 @@ class Client {
      */
     protected function &_curlFactory($data) {
         $options = array(
-            CURLOPT_FRESH_CONNECT => true,
+            CURLOPT_FRESH_CONNECT => false,
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS => $data,
@@ -99,8 +113,15 @@ class Client {
         $this->_callstack = array();
         $request = $this->_requestFactory($method, $args);
         $curl    = $this->_curlFactory(json_encode($request));
-        $return  = json_decode(curl_exec($curl));
+        $raw     = curl_exec($curl);
+        $return  = json_decode($raw);
         curl_close($curl);
+        
+        // Debugging?
+        if($this->_debug === true) {
+            $this->_debugRequest = $request;
+            $this->_debugResponse = $raw;
+        }
         
         return $return;
     }
@@ -114,6 +135,7 @@ class Client {
         $this->_endpoint  = $endpointUrl;
         $this->_callstack = array();
         $this->_id = 0;
+        $this->_debug = false;
     }
     
     /**
@@ -130,8 +152,154 @@ class Client {
         
         // Build the curl, execute and return
         $curl = $this->_curlFactory($data);
-        $return = json_decode(curl_exec($curl));
+        $raw  = curl_exec($curl);
+        $return = json_decode($raw);
         curl_close($curl);
+        
+        // Debug!
+        if($this->_debug === true) {
+            $this->_debugRequest = $data;
+            $this->_debugResponse = $raw;
+        }
+        
         return $return;
+    }
+    
+    /**
+     * Enable or disable debug
+     */
+    public function _debug($enable = true) {
+        $this->_debug = (bool)$enable;
+    }
+    
+    /**
+     * Get raw request string
+     * 
+     * @return string|array (array if batch request)
+     */
+    public function _getRequest() {
+        return $this->_debugRequest;
+    }
+    
+    /**
+     * Get raw response output
+     * 
+     * @return string
+     */
+    public function _getResponse() {
+        return $this->_debugResponse;
+    }
+    
+    /**
+     * Format the json string from debugging functions & return it
+     * 
+     * @param string|array $jsonData 
+     * @return string|array
+     */
+    public static function formatJson($jsonData) {
+        if(is_array($jsonData)) {
+            $out = array();
+            foreach($jsonData as $one) {
+                $out[] = self::_formatJsonActual($one);
+            }
+            return $out;
+        }
+        
+        // Or return the formatted string
+        return self::_formatJsonActual($jsonData);
+    }
+    
+    /**
+     * Actually formats the data
+     * 
+     * @param string $jsonData
+     * @return string
+     */
+    private static function _formatJsonActual($jsonData) {
+        $len   = strlen($jsonData);
+        $out   = '';
+        $level = 0;
+        
+        // Char-by-char
+        $actionChars = array('{', '}', ':', ',', '"');
+        $inQuotes = false;
+        for($i = 0; $i < $len; ++$i) {
+            $c = $jsonData{$i};
+            
+            if(!in_array($c, $actionChars)) {
+                $out .= $c;
+                continue;
+            }
+            
+            // If we have ":", then we just add space before & after
+            if($c == ':' && $inQuotes == false) {
+                $out .= ' : ';
+                continue;
+            }
+            elseif($c == ':') {
+                $out .= ':';
+                continue;
+            }
+            
+            // If we have {, increment the nesting
+            if($c == '{') {
+                $level++;
+                $out .= $c;
+                $out .= "\n";
+
+                if($level > 0) {
+                    $out .= str_repeat(' ', $level * self::DEBUG_INDENT);
+                }
+
+                continue;
+            }
+            
+            // If we have , -> newline
+            if($c == ',') {
+                $out .= ',';
+                $out .= "\n";
+
+                if($level > 0) {
+                    $out .= str_repeat(' ', $level * self::DEBUG_INDENT);
+                }
+
+                continue;
+            }
+            
+            // If we have }, then decrement nesting
+            if($c == '}') {
+                $appendIndent = false;
+                
+                // Check if next character is comma
+                if($c == '}' && ($i+1) < $len && $jsonData{$i+1} == ',') {
+                    $c .= ',';
+                    $i++;
+                    $appendIndent = true;
+                }
+                
+                $level--;
+                
+                $indentLevel = $level * self::DEBUG_INDENT;
+                $out .= "\n";
+                if($indentLevel > 0) {
+                    $out .= str_repeat(' ', $level * self::DEBUG_INDENT);
+                }
+                $out .= $c;
+                $out .= "\n";
+                
+                if($appendIndent === true && $indentLevel > 0) {
+                    $out .= str_repeat(' ', $level * self::DEBUG_INDENT);;
+                }
+                
+                continue;
+            }
+            
+            // If we have quote, mark it
+            if($c == '"') {
+                $inQuotes = !$inQuotes;
+            }
+        }
+        
+        return $out;
     }
 }

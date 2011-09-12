@@ -113,8 +113,8 @@ $responses = array(
 /**
  * Test suite
  */
-require_once __DIR__ . '/server.php';
-$server = new Lightbulb\Json\Rpc\Server;
+require_once __DIR__ . '/../lib/Server.php';
+$server = new Lightbulb\Json\Rpc2\Server;
 
 // Bind on* methods
 //$server->onBeforeCall[] = function() {

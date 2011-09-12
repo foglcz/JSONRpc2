@@ -1,0 +1,15 @@
+{block title}Login{/block}
+{block content}
+<p>Welcome to the test suite of the &lt;projectname&gt; API.</p>
+<p>Before you can proceed, you need to log-in. Note that these credetials are
+    not to the API itself, it's just for to the Test Suite.</p>
+
+<form action="{link login!}" method="post">
+    <label>Username</label>
+    <input type="text" name="username" />
+    
+    <label>Password</label>
+    <input type="password" name="pass" />
+    
+    <button type="submit">Login</button>
+</form>

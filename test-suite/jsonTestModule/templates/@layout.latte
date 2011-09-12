@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head> 
+	<meta charset="utf-8" /> 
+	<title>{include #title}</title> 
+        
+        <link rel="stylesheet" type="text/css" href="{$basePath}/css/jsonTest.css" />
+        <link rel="icon" type="image/ico" href="{$basePath}/favicon.ico" /> 
+        <link rel="shortcut icon" type="image/x-icon" href="{$basePath}/favicon.ico" /> 
+</head>     
+
+<body>
+    <header>
+        <h1>JSON API Test suite</h1>
+        
+        {if $presenter->isLoggedIn()}
+            {include 'Prototypes/submenu.latte'}
+            {if !empty($methods)}{include 'Prototypes/submenu-methods.latte' methods => $methods}{/if}
+        {/if}
+    </header>
+    
+    <div id="content">
+        {foreach $flashes as $flash}
+            <p class="flash">{$flash->message}</p>
+        {/foreach}
+    
+        {include #content}
+    </div>
+    
+    <div id="footer"> 
+        <div class="left">&copy; 2011 Animal Group</div> 
+        <div class="right"><a href="mailto:forest@animalgroup.cz">forest@animalgroup.cz</a> | <a href="http://www.animalgroup.cz">www.animalgroup.cz</a></div> 
+    </div> 
+</body>
+</html>

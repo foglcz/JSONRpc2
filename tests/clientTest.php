@@ -7,10 +7,10 @@
  * - math.sum
  * - math2.special.substract
  */
-require_once __DIR__ . '/client.php';
+require_once __DIR__ . '/../lib/Client.php';
 
 // Instantiate and call
-$client = new Lightbulb\Json\Rpc2\Client('http://sandbox.loc/json/serverTest.php');
+$client = new Lightbulb\Json\Rpc2\Client('http://github.loc/JSONRpc2/tests/serverTest.php');
 //$client->debug = true;
 
 echo 'call $client->notify();<br />';
