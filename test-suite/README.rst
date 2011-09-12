@@ -15,12 +15,12 @@ Installation & fast start
 1) Copy contents of "lib" folder to your Nette Framework project
 2) Put the "jsonTestModule" folder into the app/ folder of your Nette Framework project.
 3) Copy the jsonTest.css file into your www/css/ folder of Nette Framework project.
-4) Append following routes to your bootstrap.php file:
+4) Append following routes to your bootstrap.php file::
 
     $router[] = new Route('rpc/test', 'jsonTest:Base:jsonAcessLogin');
     $router[] = new Route('rpc/test/<presenter>[/<action=default>]', array('module' => 'jsonTest'));
 
-5) Copy JsonTestSuitePresenter.php from test-suite/ folder & create following route:
+5) Copy JsonTestSuitePresenter.php from test-suite/ folder & create following route::
 
     $router[] = new Route('rpc/json', 'JsonTestSuite:default');
 
@@ -64,20 +64,21 @@ The request / response forms are auto-generated. All you need to do is implement
 respective render*() method within respective presenter, and pass "$formData"
 parameter to the template.
 
-The structure of the formData array is as follows:
-array(
-    'method' => 'the name of json method, eg user.getInfo',
-    'params' => array(
-        // the array of parameters, eg:
-        'first'   => null,
-        'second'  => 'parameterName',
-        'third'   => 'parameterName:datatype',
-        'fourth'  => array('a', 'b', 'c'), // this is "select box variable"
-        'fifth'   => false, // to generate a checkbox
-        'sixth'   => '~array~', // pass "~array~" in order to generate 5 inputs for parameter
-        'seventh' => $object, // in order to pass an object
+The structure of the formData array is as follows::
+
+    array(
+        'method' => 'the name of json method, eg user.getInfo',
+        'params' => array(
+            // the array of parameters, eg:
+            'first'   => null,
+            'second'  => 'parameterName',
+            'third'   => 'parameterName:datatype',
+            'fourth'  => array('a', 'b', 'c'), // this is "select box variable"
+            'fifth'   => false, // to generate a checkbox
+            'sixth'   => '~array~', // pass "~array~" in order to generate 5 inputs for parameter
+            'seventh' => $object, // in order to pass an object
+        )
     )
-)
 
 When passing an object, it has to be an instance of a "stdClass". Also, it has to have
 one property set, which is "_objectName" - that is used as title to the object.
