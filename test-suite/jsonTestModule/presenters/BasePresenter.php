@@ -23,8 +23,8 @@ class BasePresenter extends \Nette\Application\UI\Presenter {
     public function startup() {
         parent::startup();
         
-        if(!$this->isLoggedIn() && $this->getAction() != 'jsonAccessLogin') {
-            $this->redirect('Base:jsonAccessLogin');
+        if(!$this->isLoggedIn() && $this->getAction() != 'jsonAcessLogin') {
+            $this->redirect('Base:jsonAcessLogin');
         }
         
         // Setup endpoint
