@@ -1,0 +1,19 @@
+{
+    "name": "foglcz/JSONRpc2",
+    "description": "JSONRpc2 implementation for generic use. Test suite for Nette Framework included.",
+    "keywords": ["json", "rpc", "nette"],
+    "homepage": "http://github.com/foglcz/JSONRpc2",
+    "license": ["New BSD"],
+    "authors":[
+        {
+            "name": "Pavel Ptáček",
+            "homepage": "http://animalgroup.cz"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/foglcz/JSONRpc2/issues"
+    },
+    "require":{
+        "php": ">=5.3.2"
+    }
+}

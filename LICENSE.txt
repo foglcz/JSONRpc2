@@ -1,8 +1,5 @@
 This package is released under New BSD License.
 
-The New BSD License does not apply to whole Lightbulb Project - it does however
-apply to this JSONRpc2 package in the current version.
-
 New BSD License
 ---------------
 
