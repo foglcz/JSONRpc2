@@ -1,6 +1,6 @@
 {
-    "name": "foglcz/JSONRpc2",
-    "description": "JSONRpc2 implementation for generic use. Test suite for Nette Framework included.",
+    "name": "foglcz/jsonrpc2",
+    "description": "jsonrpc2 implementation for generic use. Test suite for Nette Framework included.",
     "keywords": ["json", "rpc", "nette"],
     "homepage": "http://github.com/foglcz/JSONRpc2",
     "license": ["New BSD"],
