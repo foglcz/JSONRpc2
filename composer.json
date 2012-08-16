@@ -15,5 +15,8 @@
     },
     "require":{
         "php": ">=5.3.2"
-    }
+    },
+    "autoload": {
+        "classmap": ["lib/"]
+    }    
 }
