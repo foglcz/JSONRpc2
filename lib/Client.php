@@ -112,7 +112,7 @@ class Client {
         // Empty callstack, construct cURL object, call and return
         $this->_callstack = array();
         $request = $this->_requestFactory($method, $args);
-        $curl    = $this->_curlFactory(json_encode($request));
+        $curl    = $this->_curlFactory($request);
         $raw     = curl_exec($curl);
         $return  = json_decode($raw);
         curl_close($curl);
