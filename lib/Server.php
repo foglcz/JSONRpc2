@@ -679,6 +679,7 @@ final class Server {
         throw new \ErrorException($message . "\n" . 'in file ' . $file . "\n" . 'on line ' . $line, 0, $severity, $file, $line);
     }
 
+<<<<<<< HEAD
     /**
      * Sets the error level to be reported when handling server callbacks
      *
@@ -689,6 +690,8 @@ final class Server {
         $this->_error_handling_level = $level;
 	}
 
+=======
+>>>>>>> f6649ac... Make us able to detect a version 1.0 client
     private function set_version($i) {
         if (isset($i->jsonrpc)) {
             $ver = $i->jsonrpc;
@@ -699,6 +702,11 @@ final class Server {
         }
 
         $this->request_version = $ver;
+<<<<<<< HEAD
+=======
+
+        $this->log("Request is a version " . $this->version);
+>>>>>>> f6649ac... Make us able to detect a version 1.0 client
     }
 
     private function log($str) {
