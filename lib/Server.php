@@ -392,7 +392,7 @@ final class Server {
         $current  = $this;
         foreach($exploded as $one) {
             if(!isset($current->$one)) {
-                throw new \Exception('Method not found.', -32601);
+                throw new \Exception("Method not found. ($methodName)", -32601);
             }
             
             $current = $current->$one;
@@ -411,7 +411,7 @@ final class Server {
             }
         }
         catch(\Exception $e) {
-            throw new \Exception('Procedure not found.', -32601);
+            throw new \Exception("Procedure not found. ($methodName)", -32601);
         }
         
         // Call with named arguments
