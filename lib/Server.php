@@ -181,8 +181,8 @@ final class Server {
             throw new \Exception('Invalid Request.', -32600);
         }
         
-        // Check the validity of the request accoarding to RFC
-        if(!isset($request->jsonrpc) || $request->jsonrpc !== '2.0') {
+        // Check that it's a valid 1.0 or 2.0 request
+        if(!$this->request_version) {
             throw new \Exception('Invalid Request.', -32600);
         }
         if(!isset($request->method) || !is_string($request->method)) {
@@ -294,6 +294,11 @@ final class Server {
      * @return stdClass the response object
      */
     private function _end($response) {
+        // Version 1.x doesn't understand the JSONRPC in the response
+        if ($this->request_version < 2) {
+            unset($response->jsonrpc);
+        }
+
         $this->_output = $response;
         $this->_rawOutput = json_encode($response);
         
@@ -574,6 +579,9 @@ final class Server {
         else {
             $rawPost = file_get_contents('php://input');
             $input = json_decode($rawPost);
+
+            // Set the JSONRPC version for later
+            $this->set_version($input);
             
             // Some weird stuff going on here
             if(is_string($input)) {
@@ -665,5 +673,30 @@ final class Server {
      */
     public function setErrorHandlingLevel($level) {
         $this->_error_handling_level = $level;
+	}
+
+    private function set_version($i) {
+        if (isset($i->jsonrpc)) {
+            $ver = $i->jsonrpc;
+        } elseif (isset($i->method)) {
+            $ver = 1.1;
+        } else {
+            $ver = false;
+        }
+
+        $this->request_version = $ver;
+
+        $this->log("Request is a version " . $this->version);
+    }
+
+    private function log($str) {
+        $str  = trim($str);
+        $time = date("H:i:s");
+        $str  = "$time $str";
+        $file = "/tmp/test.log";
+
+        if (is_writable($file)) {
+            file_put_contents($file,$str,FILE_APPEND);
+        }
     }
 }
