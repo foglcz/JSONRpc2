@@ -686,8 +686,6 @@ final class Server {
         }
 
         $this->request_version = $ver;
-
-        $this->log("Request is a version " . $this->version);
     }
 
     private function log($str) {
