@@ -594,7 +594,8 @@ final class Server {
         }
         
         // Setup error handler
-        $handler = set_error_handler(array($this, '_errorHandler'), E_ALL);
+        $current_error_level = error_reporting();
+        $handler = set_error_handler(array($this, '_errorHandler'), $current_error_level);
         
         // ------------------------- Execution time ----------------------------
         try {
