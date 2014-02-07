@@ -577,8 +577,8 @@ final class Server {
         
         // From raw post data
         else {
-            $rawPost = file_get_contents('php://input');
-            $input = json_decode($rawPost);
+            $rawPost = trim(file_get_contents('php://input'));
+            $input   = json_decode($rawPost);
 
             // Set the JSONRPC version for later
             $this->set_version($input);
@@ -587,9 +587,10 @@ final class Server {
             if(is_string($input)) {
                 $input = json_decode($input);
             }
-            
+
             // End immidiatelly?
             if($input === null) {
+                $error->error->message = 'Null input';
                 $this->onError($this);
                 return $this->_end($error);
             }
