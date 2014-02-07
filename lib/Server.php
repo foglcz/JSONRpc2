@@ -124,7 +124,8 @@ final class Server {
     private $_errors = array();
 
     /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
-    private $_error_handling_level = E_ALL;
+	$current_error_level           = error_reporting();
+	private $_error_handling_level = $current_error_level;
     
     /**
      * Get reflection for the function
