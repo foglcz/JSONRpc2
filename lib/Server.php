@@ -232,8 +232,14 @@ final class Server {
                 }
                 
                 // The magic happens
-                $func   = array($this,$one->method);
-                $return = call_user_func($func, $one->params);
+                $func = array($this,$one->method);
+
+                // call_user_func_array() wants an array
+                if (!is_array($one->params)) {
+                    $one->params = array($one->params);
+                }
+
+                $return = call_user_func_array($func, $one->params);
 
                 // No response for no id -> it's a notification
                 if(!isset($one->id)) {
