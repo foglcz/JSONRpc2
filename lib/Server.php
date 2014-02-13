@@ -554,6 +554,8 @@ final class Server {
      * @param mixed $params either JSON string or the parameters directly
      */
     public function handle($params = null) {        
+        header("Content-Type: application/json", true);
+
         // Callback time!
         $this->onBeforeCall($this);
         
