@@ -231,6 +231,9 @@ final class Server {
                 // The magic happens
                 $func = array($this,$one->method);
 
+                $this->last->method = $one->method;
+                $this->last->params = $one->params;
+
                 // call_user_func_array() wants an array
                 if (!is_array($one->params)) {
                     $one->params = array($one->params);
