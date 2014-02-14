@@ -122,6 +122,9 @@ final class Server {
     
     /** @var array of errors during execution outside scope of the server */
     private $_errors = array();
+
+    /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
+    private $_error_handling_level = E_ALL;
     
     /**
      * Get reflection for the function
@@ -584,7 +587,7 @@ final class Server {
         }
         
         // Setup error handler
-        $handler = set_error_handler(array($this, '_errorHandler'), E_ALL);
+        $handler = set_error_handler(array($this, '_errorHandler'), $this->_error_handling_level);
         
         // ------------------------- Execution time ----------------------------
         try {
@@ -651,5 +654,15 @@ final class Server {
      */
     public function _errorHandler($severity, $message, $file = null, $line = null, $context = null) {
         throw new \ErrorException($message . "\n" . 'in file ' . $file . "\n" . 'on line ' . $line, 0, $severity, $file, $line);
+    }
+
+    /**
+     * Sets the error level to be reported when handling server callbacks
+     *
+     * @param int $level
+     * @see http://www.php.net/manual/en/function.error-reporting.php
+     */
+    public function setErrorHandlingLevel($level) {
+        $this->_error_handling_level = $level;
     }
 }
