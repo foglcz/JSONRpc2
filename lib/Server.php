@@ -124,8 +124,8 @@ final class Server {
     private $_errors = array();
 
     /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
-	/** Defaults to the same level as the calling code **/
-	$current_error_level           = error_reporting();
+    /** Defaults to the same level as the calling code **/
+    $current_error_level           = error_reporting();
     private $_error_handling_level = $current_error_level;
 
     /**
@@ -267,7 +267,7 @@ final class Server {
                 $error->error->code = $e->getCode();
                 $error->error->message = $e->getMessage();
 
-				throw new \Exception("Error when we tried to call '{$one->method}'", -32601);
+                throw new \Exception("Error when we tried to call '{$one->method}'", -32601);
 
                 if(isset($one->id)) {
                     $error->id = $one->id;
@@ -689,7 +689,7 @@ final class Server {
      */
     public function setErrorHandlingLevel($level) {
         $this->_error_handling_level = $level;
-	}
+    }
 
     private function set_version($i) {
         if (isset($i->jsonrpc)) {
@@ -718,3 +718,5 @@ final class Server {
         }
     }
 }
+
+// vim: tabstop=4 shiftwidth=4 expandtab autoindent softtabstop=4
