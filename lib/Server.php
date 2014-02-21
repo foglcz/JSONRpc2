@@ -694,8 +694,10 @@ final class Server {
     private function set_version($i) {
         if (isset($i->jsonrpc)) {
             $ver = $i->jsonrpc;
+        } elseif (isset($i->version)) {
+            $ver = $i->version;
         } elseif (isset($i->method)) {
-            $ver = 1.1;
+            $ver = 1.0;
         } else {
             $ver = false;
         }
