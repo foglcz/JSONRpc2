@@ -124,9 +124,7 @@ final class Server {
     private $_errors = array();
 
     /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
-    /** Defaults to the same level as the calling code **/
-    $current_error_level           = error_reporting();
-    private $_error_handling_level = $current_error_level;
+    private $_error_handling_level = '';
 
     /**
      * Get reflection for the function
@@ -337,6 +335,10 @@ final class Server {
             'onerror'      => array(),
         );
         $this->_server = new \stdClass;
+
+        /** Defaults to the same level as the calling code **/
+        $current_error_level         = error_reporting();
+        $this->_error_handling_level = $current_error_level;
     }
 
     /**
