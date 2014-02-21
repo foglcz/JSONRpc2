@@ -598,7 +598,14 @@ final class Server {
             $input   = json_decode($rawPost);
 
             // Set the JSONRPC version for later
-            $this->set_version($input);
+            $ver = $this->get_request_version($input);
+
+            // Build the "last" object so we can retrieve from it later
+            $this->last = new \stdClass;
+
+            // Store the request version so we can respond properly
+            $this->request_version       = $ver;
+            $this->last->request_version = $ver;
 
             // Some weird stuff going on here
             if(is_string($input)) {
@@ -693,7 +700,7 @@ final class Server {
         $this->_error_handling_level = $level;
     }
 
-    private function set_version($i) {
+    private function get_request_version($i) {
         if (isset($i->jsonrpc)) {
             $ver = $i->jsonrpc;
         } elseif (isset($i->version)) {
@@ -704,9 +711,7 @@ final class Server {
             $ver = false;
         }
 
-        $this->request_version = $ver;
-
-        $this->log("Request is a version " . $this->version);
+        return $ver;
     }
 
     private function log($str) {
