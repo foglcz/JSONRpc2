@@ -265,7 +265,11 @@ final class Server {
                 $error->error->code = $e->getCode();
                 $error->error->message = $e->getMessage();
 
-                throw new \Exception("Error when we tried to call '{$one->method}'", -32601);
+                // If there is an error calling that method trickle it up so we
+                // catch onError().
+                if ($e->getCode() == -32601) {
+                    throw new \Exception("Method '{$one->method}' not found", -32601);
+                }
 
                 if(isset($one->id)) {
                     $error->id = $one->id;
