@@ -178,21 +178,21 @@ final class Server {
     private function _checkRequest($request) {
         // If batch request, everything is ok
         if(!$request instanceof \stdClass) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Internal error: request is not a stdClass instance.', -32600);
         }
 
         // Check that it's a valid 1.0 or 2.0 request
-        if(!$this->request_version) {
-            throw new \Exception('Invalid Request.', -32600);
+        if(!$this->get_request_version($request)) {
+            throw new \Exception('Invalid Request. Request does not contain version number in "jsonrpc" parameter for 2.0, or "request_version" for 1.x', -32600);
         }
         if(!isset($request->method) || !is_string($request->method)) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Request does not contain method.', -32600);
         }
         if(substr($request->method, 0, 4) == 'rpc.') {
             throw new \Exception('Method not found.', -32601);
         }
         if(isset($request->id) && !is_int($request->id) && !is_string($request->id)) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Request contains ID, but it\'s not string or integer.', -32600);
         }
     }
 
