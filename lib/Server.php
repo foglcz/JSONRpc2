@@ -126,6 +126,9 @@ final class Server {
     /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
     private $_error_handling_level = '';
 
+    /** Allow calls to be made via GET in addition to POST. Disabled by default, but can be enabled at runtime */
+    public $_allow_get_calls = 0;
+
     /**
      * Get reflection for the function
      *
@@ -561,6 +564,14 @@ final class Server {
         return $this;
     }
 
+    public function var_set(&$value, $default = null) {
+        if (isset($value)) {
+            return $value;
+        } else {
+            return $default;
+        }
+    }
+
     /**
      * The magic happens here
      *
@@ -594,6 +605,27 @@ final class Server {
         // Already a set of parameters?
         elseif($params !== null) {
             $input = $params;
+        } elseif($this->_allow_get_calls && isset($_GET['method'])) {
+            $method = $_GET['method'];
+            $p_str  = $this->var_set($_GET['params']);
+
+            $params = array();
+            if ($p_str) {
+                $params = preg_split("/,/",$p_str);
+            }
+
+            $input          = new \stdClass;
+            $input->method  = $method;
+            $input->params  = $params;
+            $input->id      = 4;
+            $input->jsonrpc = '2.0';
+
+            $this->method = $method;
+            $this->params = $params;
+
+            $this->request_version = $input->jsonrpc;
+            // Build the "last" object so we can retrieve from it later
+            $this->last = new \stdClass;
         }
 
         // From raw post data
