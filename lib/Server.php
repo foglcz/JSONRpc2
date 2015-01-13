@@ -246,6 +246,26 @@ final class Server {
                 	}	
                 }
 
+                // reorder params by name is required for correct processing
+                $methodParts = explode(".",$one->method);
+                if (count($methodParts)==2) {
+                	$service = $methodParts[0];
+                	$serviceFce = $methodParts[1];
+                	$reorderedParams=array();
+                	$serviceClass = get_class($this->$service);
+                	$reflection = new \ReflectionMethod($serviceClass,$serviceFce);
+                	$reflectionParams = $reflection->getParameters();
+                	foreach ($reflectionParams as $reflectionParam) {
+                		if (isset($one->params[$reflectionParam->name])) {
+                			$reorderedParams[$reflectionParam->name] = $one->params[$reflectionParam->name];  
+                		} else {
+                			// optional parameter
+                			throw new \Exception("Missing parameter: ".$reflectionParam->name);
+                		}
+                	}
+                	$one->params = $reorderedParams;
+                }
+
                 $return = call_user_func_array($func, $one->params);
 
                 // No response for no id -> it's a notification
