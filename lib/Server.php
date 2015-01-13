@@ -239,7 +239,11 @@ final class Server {
 
                 // call_user_func_array() wants an array
                 if (!is_array($one->params)) {
-                    $one->params = array($one->params);
+                	if (is_object($one->params)) {
+                		$one->params = (array) $one->params;
+                	} else {
+                		$one->params = array($one->params);
+                	}	
                 }
 
                 $return = call_user_func_array($func, $one->params);
