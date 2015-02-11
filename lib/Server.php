@@ -605,6 +605,10 @@ final class Server {
         // Already a set of parameters?
         elseif($params !== null) {
             $input = $params;
+        } elseif(!$this->_allow_get_calls && isset($_GET['method'])) {
+            $error->error->message = 'GET method calls are not allowed';
+            $this->onError($this);
+            return $this->_end($error);
         } elseif($this->_allow_get_calls && isset($_GET['method'])) {
             $method = $_GET['method'];
             $p_str  = $this->var_set($_GET['params']);
