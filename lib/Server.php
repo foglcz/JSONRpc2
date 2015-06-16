@@ -641,7 +641,9 @@ final class Server {
             $ver = $this->get_request_version($input);
 
             // Build the "last" object so we can retrieve from it later
-            $this->last = new \stdClass;
+            $this->last         = new \stdClass;
+            $this->last->method = '';
+            $this->last->params = array();
 
             // Store the request version so we can respond properly
             $this->request_version       = $ver;
