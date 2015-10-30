@@ -637,6 +637,11 @@ final class Server {
             $rawPost = trim(file_get_contents('php://input'));
             $input   = json_decode($rawPost);
 
+            // Some weird stuff going on here
+            if(is_string($input)) {
+                $input = json_decode($input);
+            }
+
             // Set the JSONRPC version for later
             $ver = $this->get_request_version($input);
 
@@ -648,11 +653,6 @@ final class Server {
             // Store the request version so we can respond properly
             $this->request_version       = $ver;
             $this->last->request_version = $ver;
-
-            // Some weird stuff going on here
-            if(is_string($input)) {
-                $input = json_decode($input);
-            }
 
             // End immidiatelly?
             if($input === null) {
