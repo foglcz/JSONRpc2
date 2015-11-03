@@ -265,8 +265,6 @@ final class Server {
                 $error->error->code = $e->getCode();
                 $error->error->message = $e->getMessage();
 
-                throw new \Exception("Error when we tried to call '{$one->method}'", -32601);
-
                 if(isset($one->id)) {
                     $error->id = $one->id;
                 }
