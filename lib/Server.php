@@ -580,16 +580,27 @@ final class Server {
     public function handle($params = null) {
         header("Content-Type: application/json", true);
 
-        // Callback time!
-        $this->onBeforeCall($this);
+        // Setup error handler
+        $handler = set_error_handler(array($this, '_errorHandler'), $this->_error_handling_level);
 
         // Prepare current output -> in case of wrong json string
-        $error = new \stdClass;
-        $error->jsonrpc = '2.0';
-        $error->error = new \stdClass;
-        $error->error->code = -32700;
+        $error                 = new \stdClass;
+        $error->jsonrpc        = '2.0';
+        $error->error          = new \stdClass;
+        $error->error->code    = -32700;
         $error->error->message = 'Parse error.';
-        $error->id = null;
+        $error->id             = null;
+
+        // Callback time!
+        try {
+            $this->onBeforeCall($this);
+        } catch (\Exception $e) {
+            // Wrap the exception into request
+            $error->error->code = $e->getCode();
+            $error->error->message = get_class($e) . ': ' . $e->getMessage();
+            $this->onError($this);
+            return $this->_end($error);
+        }
 
         // Raw json string?
         if(is_string($params)) {
@@ -661,9 +672,6 @@ final class Server {
                 return $this->_end($error);
             }
         }
-
-        // Setup error handler
-        $handler = set_error_handler(array($this, '_errorHandler'), $this->_error_handling_level);
 
         // ------------------------- Execution time ----------------------------
         try {
