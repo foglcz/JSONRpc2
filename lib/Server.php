@@ -261,15 +261,15 @@ final class Server {
 
             // Build error reponse on wrong requests
             catch(\Exception $e) {
-                $error = new \stdClass;
-                $error->jsonrpc = '2.0';
-                $error->error = new \stdClass;
-                $error->error->code = $e->getCode();
+                $error                 = new \stdClass;
+                $error->jsonrpc        = '2.0';
+                $error->error          = new \stdClass;
+                $error->error->code    = $e->getCode();
                 $error->error->message = $e->getMessage();
 
                 // If there is an error calling that method trickle it up so we
                 // catch onError().
-                if ($e->getCode() == -32601) {
+                if (in_array($error->error->code,array(0,-32601))) {
                     throw new \Exception("Method '{$one->method}' not found", -32601);
                 }
 
