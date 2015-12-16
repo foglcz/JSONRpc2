@@ -234,9 +234,6 @@ final class Server {
                     $one->params = null;
                 }
 
-                // The magic happens
-                $func = array($this,$one->method);
-
                 $this->last->method = $one->method;
                 $this->last->params = $one->params;
 
@@ -245,6 +242,8 @@ final class Server {
                     $one->params = array($one->params);
                 }
 
+                // The magic happens
+                $func   = $this->{$one->method};
                 $return = call_user_func_array($func, $one->params);
 
                 // No response for no id -> it's a notification
