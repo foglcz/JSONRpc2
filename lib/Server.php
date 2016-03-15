@@ -400,7 +400,8 @@ final class Server {
         }
 
         // Append the variable / function
-        return $current->$method;
+        $function = &$current->$method;
+        return $function;
     }
 
     /**
