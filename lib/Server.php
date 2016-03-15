@@ -124,9 +124,10 @@ final class Server {
     private $_errors = array();
 
     /** @var int Error level to be reported when handling server callbacks, @see http://www.php.net/manual/en/function.error-reporting.php */
-	/** Defaults to the same level as the calling code **/
-	$current_error_level           = error_reporting();
-    private $_error_handling_level = $current_error_level;
+    private $_error_handling_level = '';
+
+    /** Allow calls to be made via GET in addition to POST. Disabled by default, but can be enabled at runtime */
+    public $_allow_get_calls = 0;
 
     /**
      * Get reflection for the function
@@ -180,21 +181,21 @@ final class Server {
     private function _checkRequest($request) {
         // If batch request, everything is ok
         if(!$request instanceof \stdClass) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Internal error: request is not a stdClass instance.', -32600);
         }
 
         // Check that it's a valid 1.0 or 2.0 request
-        if(!$this->request_version) {
-            throw new \Exception('Invalid Request.', -32600);
+        if(!$this->get_request_version($request)) {
+            throw new \Exception('Invalid Request. Request does not contain version number in "jsonrpc" parameter for 2.0, or "request_version" for 1.x', -32600);
         }
         if(!isset($request->method) || !is_string($request->method)) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Request does not contain method.', -32600);
         }
         if(substr($request->method, 0, 4) == 'rpc.') {
             throw new \Exception('Method not found.', -32601);
         }
         if(isset($request->id) && !is_int($request->id) && !is_string($request->id)) {
-            throw new \Exception('Invalid Request.', -32600);
+            throw new \Exception('Invalid Request. Request contains ID, but it\'s not string or integer.', -32600);
         }
     }
 
@@ -233,9 +234,6 @@ final class Server {
                     $one->params = null;
                 }
 
-                // The magic happens
-                $func = array($this,$one->method);
-
                 $this->last->method = $one->method;
                 $this->last->params = $one->params;
 
@@ -244,6 +242,8 @@ final class Server {
                     $one->params = array($one->params);
                 }
 
+                // The magic happens
+                $func   = $this->{$one->method};
                 $return = call_user_func_array($func, $one->params);
 
                 // No response for no id -> it's a notification
@@ -261,13 +261,17 @@ final class Server {
 
             // Build error reponse on wrong requests
             catch(\Exception $e) {
-                $error = new \stdClass;
-                $error->jsonrpc = '2.0';
-                $error->error = new \stdClass;
-                $error->error->code = $e->getCode();
+                $error                 = new \stdClass;
+                $error->jsonrpc        = '2.0';
+                $error->error          = new \stdClass;
+                $error->error->code    = $e->getCode();
                 $error->error->message = $e->getMessage();
 
-				throw new \Exception("Error when we tried to call '{$one->method}'", -32601);
+                // If there is an error calling that method trickle it up so we
+                // catch onError().
+                if (in_array($error->error->code,array(0,-32601))) {
+                    throw new \Exception("Method '{$one->method}' not found", -32601);
+                }
 
                 if(isset($one->id)) {
                     $error->id = $one->id;
@@ -337,6 +341,10 @@ final class Server {
             'onerror'      => array(),
         );
         $this->_server = new \stdClass;
+
+        /** Defaults to the same level as the calling code **/
+        $current_error_level         = error_reporting();
+        $this->_error_handling_level = $current_error_level;
     }
 
     /**
@@ -392,7 +400,8 @@ final class Server {
         }
 
         // Append the variable / function
-        return $current->$method;
+        $function = & $current->$method;
+        return $function;
     }
 
     /**
@@ -555,6 +564,14 @@ final class Server {
         return $this;
     }
 
+    public function var_set(&$value, $default = null) {
+        if (isset($value)) {
+            return $value;
+        } else {
+            return $default;
+        }
+    }
+
     /**
      * The magic happens here
      *
@@ -563,16 +580,27 @@ final class Server {
     public function handle($params = null) {
         header("Content-Type: application/json", true);
 
-        // Callback time!
-        $this->onBeforeCall($this);
+        // Setup error handler
+        $handler = set_error_handler(array($this, '_errorHandler'), $this->_error_handling_level);
 
         // Prepare current output -> in case of wrong json string
-        $error = new \stdClass;
-        $error->jsonrpc = '2.0';
-        $error->error = new \stdClass;
-        $error->error->code = -32700;
+        $error                 = new \stdClass;
+        $error->jsonrpc        = '2.0';
+        $error->error          = new \stdClass;
+        $error->error->code    = -32700;
         $error->error->message = 'Parse error.';
-        $error->id = null;
+        $error->id             = null;
+
+        // Callback time!
+        try {
+            $this->onBeforeCall($this);
+        } catch (\Exception $e) {
+            // Wrap the exception into request
+            $error->error->code = $e->getCode();
+            $error->error->message = get_class($e) . ': ' . $e->getMessage();
+            $this->onError($this);
+            return $this->_end($error);
+        }
 
         // Raw json string?
         if(is_string($params)) {
@@ -588,6 +616,31 @@ final class Server {
         // Already a set of parameters?
         elseif($params !== null) {
             $input = $params;
+        } elseif(!$this->_allow_get_calls && isset($_GET['method'])) {
+            $error->error->message = 'GET method calls are not allowed';
+            $this->onError($this);
+            return $this->_end($error);
+        } elseif($this->_allow_get_calls && isset($_GET['method'])) {
+            $method = $_GET['method'];
+            $p_str  = $this->var_set($_GET['params']);
+
+            $params = array();
+            if ($p_str) {
+                $params = preg_split("/,/",$p_str);
+            }
+
+            $input          = new \stdClass;
+            $input->method  = $method;
+            $input->params  = $params;
+            $input->id      = 4;
+            $input->jsonrpc = '2.0';
+
+            $this->method = $method;
+            $this->params = $params;
+
+            $this->request_version = $input->jsonrpc;
+            // Build the "last" object so we can retrieve from it later
+            $this->last = new \stdClass;
         }
 
         // From raw post data
@@ -595,13 +648,22 @@ final class Server {
             $rawPost = trim(file_get_contents('php://input'));
             $input   = json_decode($rawPost);
 
-            // Set the JSONRPC version for later
-            $this->set_version($input);
-
             // Some weird stuff going on here
             if(is_string($input)) {
                 $input = json_decode($input);
             }
+
+            // Set the JSONRPC version for later
+            $ver = $this->get_request_version($input);
+
+            // Build the "last" object so we can retrieve from it later
+            $this->last         = new \stdClass;
+            $this->last->method = '';
+            $this->last->params = array();
+
+            // Store the request version so we can respond properly
+            $this->request_version       = $ver;
+            $this->last->request_version = $ver;
 
             // End immidiatelly?
             if($input === null) {
@@ -610,9 +672,6 @@ final class Server {
                 return $this->_end($error);
             }
         }
-
-        // Setup error handler
-        $handler = set_error_handler(array($this, '_errorHandler'), $this->_error_handling_level);
 
         // ------------------------- Execution time ----------------------------
         try {
@@ -689,9 +748,9 @@ final class Server {
      */
     public function setErrorHandlingLevel($level) {
         $this->_error_handling_level = $level;
-	}
+    }
 
-    private function set_version($i) {
+    private function get_request_version($i) {
         if (isset($i->jsonrpc)) {
             $ver = $i->jsonrpc;
         } elseif (isset($i->version)) {
@@ -702,9 +761,7 @@ final class Server {
             $ver = false;
         }
 
-        $this->request_version = $ver;
-
-        $this->log("Request is a version " . $this->version);
+        return $ver;
     }
 
     private function log($str) {
@@ -718,3 +775,5 @@ final class Server {
         }
     }
 }
+
+// vim: tabstop=4 shiftwidth=4 expandtab autoindent softtabstop=4
