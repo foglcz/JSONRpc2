@@ -37,10 +37,6 @@ With server, you just define define methods in a couple of different ways:
 The methods, which are given to the server, can be then called via numbered
 or named parameters (see json-rpc specification here: http://groups.google.com/group/json-rpc/web/json-rpc-2-0?pli=1 )
 
-Methods can have optional arguments:
-
-    $server->user->login = function($email, $password, $permanent = false)
-
 The server class respects binding of event methods:
 
     // Bind events
