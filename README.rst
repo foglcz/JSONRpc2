@@ -15,18 +15,23 @@ will actually result in following json call::
 
  {... method: "first.second.third" ...}
 
-With server, you just define the variable with a class. Eg. "user.login" and
-"user.stuff" can be achieved like this::
+With server, you just define define methods in a couple of different ways::
 
- $server = new Lightbulb\Json\Rpc2\Server;
- $server->user = new MyJsonUserHandler;
+    $server = new Lightbulb\Json\Rpc2\Server;
 
-This is particulary handy in order to separate individual methods within robust APIs.
-Handlers can be individual methods as well. Feel free to do anything of the following::
+    // Class based where all the methods in myClass are exposed as user.method
+    $server->use = new MyClass;
 
-    $server->myTest = new MyTestHandler; // contains mytest.* methods
-    $server->myFunction = function($param1, $param2) { /* ... */ };
+    // Anything that is "callable", either built in PHP functions or your own
+    $server->upper = 'strtoupper';
+
+    // Anonymous functions work too
+    $server->firstTwo = function($str) { return substr($str,0,2); };
+
+    // Force a namespace to map to an object method
     $server->{'mytesthandler.myfunc'} = array($myObject, 'myMethod');
+
+    // Static method calls work
     $server->myStaticHandler = 'MyStaticClass::theStaticFunction';
 
 The methods, which are given to the server, can be then called via numbered
@@ -45,8 +50,8 @@ The server class respects binding of event methods:
     // Bind events
     $server->onBeforeCall[] = function($server) {};
     $server->onBeforeCall[] = function($server) {};
-    $server->onSuccess[] = function($server) {};
-    $server->onError[] = function($server) {};
+    $server->onSuccess[]    = function($server) {};
+    $server->onError[]      = function($server) {};
 
     // Another way of in-binding the events; it does *not* remove the last one
     $server->onError = function($server) {};
