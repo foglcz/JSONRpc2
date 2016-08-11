@@ -6,16 +6,16 @@ The library consist of both server and client implementations.
 
 Both server and client supports for "dots magic". That is, every method called
 using the RPC classes can contain dots. The dots then separates individual
-objects. ie::
+objects. ie:
 
- $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
- $client->first->second->third($arg);
+    $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
+    $client->first->second->third($arg);
 
-will actually result in following json call::
+will actually result in following json call:
 
- {... method: "first.second.third" ...}
+    {... method: "first.second.third" ...}
 
-With server, you just define define methods in a couple of different ways::
+With server, you just define define methods in a couple of different ways:
 
     $server = new Lightbulb\Json\Rpc2\Server;
 
@@ -39,13 +39,9 @@ or named parameters (see json-rpc specification here: http://groups.google.com/g
 
 Methods can have optional arguments:
 
-::
-
     $server->user->login = function($email, $password, $permanent = false)
 
 The server class respects binding of event methods:
-
-::
 
     // Bind events
     $server->onBeforeCall[] = function($server) {};
@@ -77,11 +73,11 @@ That awesome framework can be obtained at http://www.nette.org
 
 Known bugs
 ==========
-Due to the nature of PHP, when you use optional argument of method like this::
+Due to the nature of PHP, when you use optional argument of method like this:
 
     $server->user->store($object = null)
 
-you cannot then use "exact resolution operator" === . Hence, only following is applicable::
+you cannot then use "exact resolution operator" === . Hence, only following is applicable:
 
     if($object != null) // note the "!="
 
