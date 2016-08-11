@@ -20,10 +20,11 @@ With server, you just define define methods in a couple of different ways:
     $server = new Lightbulb\Json\Rpc2\Server;
 
     // Class based where all the methods in myClass are exposed as user.method
-    $server->use = new MyClass;
+    $server->user = new MyClass;
 
     // Anything that is "callable", either built in PHP functions or your own
-    $server->upper = 'strtoupper';
+    $server->upper     = 'strtoupper';
+    $server->userClean = 'userClean';
 
     // Anonymous functions work too
     $server->firstTwo = function($str) { return substr($str,0,2); };
