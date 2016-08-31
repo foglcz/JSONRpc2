@@ -270,7 +270,7 @@ final class Server {
                 // If there is an error calling that method trickle it up so we
                 // catch onError().
                 if (in_array($error->error->code,array(0,-32601))) {
-                    throw new \Exception("Method '{$one->method}' not found", -32601);
+                    throw new \Exception("Bad parameters or method '{$one->method}' not found", -32601);
                 }
 
                 if(isset($one->id)) {
