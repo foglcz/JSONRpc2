@@ -242,8 +242,12 @@ final class Server {
                     $one->params = array($one->params);
                 }
 
-                // The magic happens
-                $func   = $this->{$one->method};
+                // All the functions should be stored inside of $this so we need to call them
+                $func = $this->{$one->method}; // Method: $s->foo = array($obj,$method);
+                if (!is_callable($func)) {
+                    $func = array($this,$one->method); // Class: $s->foo = new myClass;
+                }
+
                 $return = call_user_func_array($func, $one->params);
 
                 // No response for no id -> it's a notification
