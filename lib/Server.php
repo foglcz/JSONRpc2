@@ -239,7 +239,31 @@ final class Server {
 
                 // call_user_func_array() wants an array
                 if (!is_array($one->params)) {
-                    $one->params = array($one->params);
+                	if (is_object($one->params)) {
+                		$one->params = (array) $one->params;
+                	} else {
+                		$one->params = array($one->params);
+                	}	
+                }
+
+                // reorder params by name is required for correct processing
+                $methodParts = explode(".",$one->method);
+                if (count($methodParts)==2) {
+                	$service = $methodParts[0];
+                	$serviceFce = $methodParts[1];
+                	$reorderedParams=array();
+                	$serviceClass = get_class($this->$service);
+                	$reflection = new \ReflectionMethod($serviceClass,$serviceFce);
+                	$reflectionParams = $reflection->getParameters();
+                	foreach ($reflectionParams as $reflectionParam) {
+                		if (isset($one->params[$reflectionParam->name])) {
+                			$reorderedParams[$reflectionParam->name] = $one->params[$reflectionParam->name];  
+                		} else {
+                			// optional parameter
+                			throw new \Exception("Missing parameter: ".$reflectionParam->name);
+                		}
+                	}
+                	$one->params = $reorderedParams;
                 }
 
                 // All the functions should be stored inside of $this so we need to call them
