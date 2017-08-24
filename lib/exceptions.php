@@ -9,7 +9,7 @@
  * @license New BSD License
  */
 
-if(!class_exists('InvalidStateException')) {
+if(!class_exists('InvalidStateException',false)) {
     class InvalidStateException extends Exception {}
 }
 
