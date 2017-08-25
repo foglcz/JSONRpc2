@@ -1,19 +1,13 @@
-==============================
- JSON-RPC version 2 libraries
-==============================
-This library contains a PHP implementation of JSON-RPC version 2.
-The library consist of both server and client implementations.
+# JSON-RPC client and server libraries
+This library contains a PHP implementation of JSON-RPC version 2, both client and server.
 
-Both server and client supports for "dots magic". That is, every method called
-using the RPC classes can contain dots. The dots then separates individual
-objects. ie:
+## Installation
+Download the contents of the `lib` folder to your project. Then simply include the library:
 
-    $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
-    $client->first->second->third($arg);
-
-will actually result in following json call:
-
-    {... method: "first.second.third" ...}
+```
+include "lib/Server.php";
+$server = new Lightbulb\Json\Rpc2\Server;
+```
 
 With server, you just define define methods in a couple of different ways:
 
@@ -55,6 +49,17 @@ For detailed tests see tests folder.
 There is an example implementation of the presenter within "example" folder,
 which can be used for Nette Framework (TM)
 
+Both server and client supports for "dots magic". That is, every method called
+using the RPC classes can contain dots. The dots then separates individual
+objects. ie:
+
+    $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
+    $client->first->second->third($arg);
+
+will actually result in following json call:
+
+    {... method: "first.second.third" ...}
+
 Test suite
 ==========
 Within "test-suite" folder you can find implementation of the generic test-suite
@@ -62,11 +67,7 @@ module for Nette Framework projects. With that, you can simply semi-generate
 the test suite, which you can use both for reference & mainly testing
 of all your methods.
 
-Installation
-============
-Download contents of the lib/* folder and put them into your project.
-If you want to use test-suite or examples, you need to use Nette Framework.
-That awesome framework can be obtained at http://www.nette.org
+If you want to use test-suite or examples, you need to use [Nette Framework](http://www.nette.org). 
 
 Known bugs
 ==========
