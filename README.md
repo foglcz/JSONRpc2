@@ -1,7 +1,9 @@
 # JSON-RPC client and server libraries
+
 This library contains a PHP implementation of JSON-RPC version 2, both client and server.
 
 ## Installation
+
 Download the contents of the `lib` folder to your project. Then simply include the library:
 
 ```
@@ -48,22 +50,12 @@ For detailed tests see tests folder.
     $client->firstTwo("Hello");
 
 #### Client supports class chaining to call nested methods
+
     $ok = $client->user->login($user, $pass);
- 
+
 will actually result in following json call:
 
     {... method: "user.login" ...}
-
-## Known bugs (features)
-Due to the nature of PHP, when you use optional argument of method like this:
-
-    $server->user->store($object = null)
-
-you cannot then use "exact resolution operator" === . Hence, only following is applicable:
-
-    if($object != null) // note the "!="
-
-This applies only to `NULL` variables.
 
 ## License
 Licensed under the New BSD License. Copyright 2011 Pavel Ptacek. All rights reserved.
