@@ -6,10 +6,8 @@ Download the contents of the `lib` folder to your project. Then simply include t
 
 ```
 include "lib/Server.php";
-$server = new Lightbulb\Json\Rpc2\Server;
 ```
-
-With server, you just define define methods in a couple of different ways:
+### Server methods
 
     $server = new Lightbulb\Json\Rpc2\Server;
 
@@ -40,37 +38,23 @@ The server class respects binding of event methods:
     $server->onSuccess[]    = function($server) {};
     $server->onError[]      = function($server) {};
 
-    // Another way of in-binding the events; it does *not* remove the last one
-    $server->onError = function($server) {};
-
 For detailed usage see comments with the server and clients class.
 For detailed tests see tests folder.
 
-There is an example implementation of the presenter within "example" folder,
-which can be used for Nette Framework (TM)
+### Client calls
 
-Both server and client supports for "dots magic". That is, every method called
-using the RPC classes can contain dots. The dots then separates individual
-objects. ie:
+    $client = new Lightbulb\Json\Rpc2\Client('http://api.domain.com/endpoint');
+    $client->upper("kitten");
+    $client->firstTwo("Hello");
 
-    $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
-    $client->first->second->third($arg);
-
+#### Client supports class chaining to call nested methods
+    $ok = $client->user->login($user, $pass);
+ 
 will actually result in following json call:
 
-    {... method: "first.second.third" ...}
+    {... method: "user.login" ...}
 
-Test suite
-==========
-Within "test-suite" folder you can find implementation of the generic test-suite
-module for Nette Framework projects. With that, you can simply semi-generate
-the test suite, which you can use both for reference & mainly testing
-of all your methods.
-
-If you want to use test-suite or examples, you need to use [Nette Framework](http://www.nette.org). 
-
-Known bugs
-==========
+## Known bugs (features)
 Due to the nature of PHP, when you use optional argument of method like this:
 
     $server->user->store($object = null)
@@ -79,13 +63,7 @@ you cannot then use "exact resolution operator" === . Hence, only following is a
 
     if($object != null) // note the "!="
 
-This applies only to NULL variables.
+This applies only to `NULL` variables.
 
-Support
-=======
-Contact me directly using e-mail at <birdie at animalgroup dot cz> or on twitter
-@foglcz , or of course, in here.
-
-License
-=======
+## License
 Licensed under the New BSD License. Copyright 2011 Pavel Ptacek. All rights reserved.
