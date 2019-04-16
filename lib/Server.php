@@ -594,6 +594,9 @@ final class Server {
         $error->error->message = 'Parse error.';
         $error->id             = null;
 
+        // Build the "last" object so we can retrieve from it later
+        $this->last = new \stdClass;
+
         // Callback time!
         try {
             $this->onBeforeCall($this);
@@ -642,8 +645,6 @@ final class Server {
             $this->params = $params;
 
             $this->request_version = $input->jsonrpc;
-            // Build the "last" object so we can retrieve from it later
-            $this->last = new \stdClass;
         }
 
         // From raw post data
@@ -659,8 +660,6 @@ final class Server {
             // Set the JSONRPC version for later
             $ver = $this->get_request_version($input);
 
-            // Build the "last" object so we can retrieve from it later
-            $this->last         = new \stdClass;
             $this->last->method = '';
             $this->last->params = array();
 
