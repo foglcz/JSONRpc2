@@ -594,7 +594,7 @@ final class Server {
         $error->error->message = 'Parse error.';
         $error->id             = null;
 
-        // Build the "last" object so we can retrieve from it later
+        // Build the "last" object so we can reference it later
         $this->last = new \stdClass;
 
         // Callback time!
@@ -617,15 +617,15 @@ final class Server {
                 $this->onError($this);
                 return $this->_end($error);
             }
-        }
-
         // Already a set of parameters?
-        elseif($params !== null) {
+        } elseif($params !== null) {
             $input = $params;
+        // Attemping a GET call but they're not enabled
         } elseif(!$this->_allow_get_calls && isset($_GET['method'])) {
             $error->error->message = 'GET method calls are not allowed';
             $this->onError($this);
             return $this->_end($error);
+        // A valid GET call
         } elseif($this->_allow_get_calls && isset($_GET['method'])) {
             $method = $_GET['method'];
             $p_str  = $this->var_set($_GET['params']);
@@ -645,10 +645,8 @@ final class Server {
             $this->params = $params;
 
             $this->request_version = $input->jsonrpc;
-        }
-
         // From raw post data
-        else {
+        } else {
             $rawPost = trim(file_get_contents('php://input'));
             $input   = json_decode($rawPost);
 
