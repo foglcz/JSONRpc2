@@ -224,7 +224,7 @@ class Client {
         $actionChars = array('{', '}', ':', ',', '"');
         $inQuotes = false;
         for($i = 0; $i < $len; ++$i) {
-            $c = $jsonData{$i};
+            $c = $jsonData[$i];
             
             if(!in_array($c, $actionChars)) {
                 $out .= $c;
@@ -271,7 +271,7 @@ class Client {
                 $appendIndent = false;
                 
                 // Check if next character is comma
-                if($c == '}' && ($i+1) < $len && $jsonData{$i+1} == ',') {
+                if($c == '}' && ($i+1) < $len && $jsonData[$i+1] == ',') {
                     $c .= ',';
                     $i++;
                     $appendIndent = true;
