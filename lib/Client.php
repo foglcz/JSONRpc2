@@ -11,6 +11,7 @@
 
 namespace Lightbulb\Json\Rpc2;
 
+
 /**
  * This is JSON-RPC version 2 client
  * 
@@ -20,7 +21,10 @@ namespace Lightbulb\Json\Rpc2;
  * <code>
  * $client = new Lightbulb\Json\Rpc2\Client('http://endpoint');
  * $return = $client->method(arg1, arg2, ...);
- * 
+ *
+ * // optionally add custom curl headers (for example: timeout)
+ * $client->setOption(CURLOPT_TIMEOUT, 400);
+ *
  * // Results in method "math.sum"
  * $return = $client->math->sum(arg1, arg2, arg3, ...);
  * 
@@ -53,13 +57,17 @@ class Client {
     
     /** @var int */
     private $_id;
-    
+
     /** @var string */
     protected $_debugRequest;
+
+    // curl additonal options
+    /** @var array */
+    private $options = array();
     
     /** @var string */
     protected $_debugResponse;
-    
+
     /**
      * Creates json-conforming request
      * 
@@ -75,6 +83,17 @@ class Client {
         $request->id = $this->_id++;
         return json_encode($request);
     }
+
+    /**
+     * add CURL option - see https://www.php.net/manual/en/function.curl-setopt.php
+     *
+     * @param int $option
+     * @param mixed $value
+     * @return void
+     */
+    public function setOption($option, $value) {
+        $this->options[$option] = $value;
+    }
     
     /**
      * Creates new cURL handle
@@ -86,6 +105,9 @@ class Client {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS => $data,
         );
+        foreach ($this->options as $option => $value) {
+            $options[$option] = $value;
+        }
         
         $curl = curl_init($this->_endpoint);
         curl_setopt_array($curl, $options);
