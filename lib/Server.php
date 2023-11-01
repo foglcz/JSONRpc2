@@ -101,6 +101,8 @@ require_once __DIR__ . '/exceptions.php';
  *
  * @author Pavel Ptacek
  */
+
+#[\AllowDynamicProperties]
 final class Server {
     /** @var mixed structured output sent to browser */
     private $_output;
