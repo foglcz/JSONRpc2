@@ -569,14 +569,6 @@ final class Server {
         return $this;
     }
 
-    public function var_set(&$value, $default = null) {
-        if (isset($value)) {
-            return $value;
-        } else {
-            return $default;
-        }
-    }
-
     /**
      * The magic happens here
      *
@@ -630,7 +622,7 @@ final class Server {
         // A valid GET call
         } elseif($this->_allow_get_calls && isset($_GET['method'])) {
             $method = $_GET['method'];
-            $p_str  = $this->var_set($_GET['params']);
+            $p_str  = $_GET['params'] ?? "";
 
             $params = array();
             if ($p_str) {
