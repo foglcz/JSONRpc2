@@ -33,6 +33,12 @@ $server->handle();
 
 More information in [advanced options](advanced-options.md) docs.
 
+#### Warning: Creation of dynamic property XYZ is deprecated
+
+Newer PHPs warn about creating dynamic properties on classes. If you add class
+methods to your server you will need to add `#[\AllowDynamicProperties]`
+before the class definition to work around this error.
+
 ### Client example
 
 ```php
