@@ -17,7 +17,7 @@ include "lib/Server.php";
 ```php
 $server = new Lightbulb\Json\Rpc2\Server;
 
-// Class based: All methods in myClass are exposed as user.method
+// Class based: All methods in MyClass are exposed as user.method
 $server->user = new MyClass;
 
 // Anything that is "callable", either built in PHP functions or your own
