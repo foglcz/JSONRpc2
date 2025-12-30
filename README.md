@@ -1,7 +1,7 @@
 # JSON-RPC client and server libraries
 
-This library contains a PHP implementation of JSON-RPC version 2, both client
-and server.
+This library contains a PHP implementation of JSON-RPC version 2. This libraray
+implements both a client and a server.
 
 ## Installation
 
@@ -39,7 +39,7 @@ $server->handle();
 
 The methods, which are given to the server, can be then called via numbered
 or named parameters. More information available in the
-[JSON-RPC specification](https://www.jsonrpc.org/specification)
+[JSON-RPC specification](https://www.jsonrpc.org/specification).
 
 The server class respects binding of event methods:
 
