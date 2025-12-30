@@ -732,9 +732,9 @@ final class Server {
      */
     public function _errorHandler($severity, $message, $file = null, $line = null, $context = null) {
         // ignore error messages from expressions prepended the at sign (@) see https://www.php.net/manual/en/language.operators.errorcontrol.php
-        if (error_reporting() === 0) { 
+        if (error_reporting() === 0) {
             return false;
-        }        
+        }
         throw new \ErrorException($message . "\n" . 'in file ' . $file . "\n" . 'on line ' . $line, 0, $severity, $file, $line);
     }
 
