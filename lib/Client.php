@@ -137,7 +137,6 @@ class Client {
         $curl    = $this->_curlFactory(json_encode($request));
         $raw     = curl_exec($curl);
         $return  = json_decode($raw);
-        curl_close($curl);
         
         // Debugging?
         if($this->_debug === true) {
@@ -176,7 +175,6 @@ class Client {
         $curl = $this->_curlFactory($data);
         $raw  = curl_exec($curl);
         $return = json_decode($raw);
-        curl_close($curl);
         
         // Debug!
         if($this->_debug === true) {
