@@ -15,9 +15,23 @@
 
 namespace Lightbulb\Json\Rpc2;
 
-if(!class_exists('InvalidStateException',false)) {
-    class InvalidStateException extends Exception {}
-}
+set_exception_handler(function (\Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+
+    $obj = [
+        'error' => [
+            'type'    => get_class($e),
+            'code'    => $e->getCode(),
+            'message' => $e->getMessage(),
+        ],
+        'id' => null,
+    ];
+
+    echo json_encode($obj);
+
+    exit;
+});
 
 /**
  * This is JSON-RPCv2 server handler class
@@ -667,9 +681,7 @@ final class Server {
 
             // End immidiatelly?
             if($input === null) {
-                $error->error->message = 'Null input';
-                $this->onError($this);
-                return $this->_end($error);
+                throw new \RuntimeException("Null input", 12309);
             }
         }
 
@@ -705,8 +717,8 @@ final class Server {
      * @throws InvalidStateException
      */
     public function getOutput() {
-        if(empty($this->_output)) {
-            throw new \InvalidStateException('You are requesting output from server while the handle() function has not been called');
+        if (empty($this->_output)) {
+            throw new \RuntimeException("You are requesting output from server while the handle() function has not been called", 24809);
         }
 
         return $this->_output;
@@ -719,8 +731,8 @@ final class Server {
      * @throws InvalidStateException
      */
     public function getRawOutput() {
-        if(empty($this->_rawOutput)) {
-            throw new \InvalidStateException('You are requesting output from server while the handle() function has not been called');
+        if (empty($this->_rawOutput)) {
+            throw new \RuntimeException("You are requesting output from server while the handle() function has not been called", 24809);
         }
 
         return $this->_rawOutput;
