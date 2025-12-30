@@ -1,4 +1,4 @@
-# JSON-RPC client and server libraries
+# PHP JSON-RPC client and server library
 
 This library contains a PHP implementation of JSON-RPC version 2. This libraray
 implements both a client and a server.
@@ -6,74 +6,47 @@ implements both a client and a server.
 ## Installation
 
 Download the contents of the `lib` folder to your project. Then simply include
-the library:
+the appropriate library:
 
 ```php
 include "lib/Server.php";
+include "lib/Client.php";
 ```
 
-### Server method examples
+### Server example
 
 ```php
 $server = new Lightbulb\Json\Rpc2\Server;
 
-// Class based: All methods in MyClass are exposed as user.method
+// Add functions to the server object to make them callable remotely
+
+// Built in PHP functions or user functions
+$server->upper = 'strtoupper';
+$server->getID = 'findUserID';
+
+// Class based: All public methods in MyClass are exposed as user.method
 $server->user = new MyClass;
-
-// Anything that is "callable", either built in PHP functions or your own
-$server->upper     = 'strtoupper';
-$server->userClean = 'userClean';
-
-// Anonymous functions work also
-$server->firstTwo = function($str) { return substr($str,0,2); };
-
-// Force a namespace to map to an object method
-$server->{'mytesthandler.myfunc'} = array($myObject, 'myMethod');
-
-// Static method calls work
-$server->myStaticHandler = 'MyStaticClass::theStaticFunction';
 
 // Receive and process any incoming RPC calls
 $server->handle();
 ```
 
-The methods, which are given to the server, can be then called via numbered
-or named parameters. More information available in the
-[JSON-RPC specification](https://www.jsonrpc.org/specification).
+More information in [advanced options](advanced-options.md) docs.
 
-The server class respects binding of event methods:
+### Client example
 
 ```php
-// Bind events
-$server->onBeforeCall[] = function($server) {};
-$server->onBeforeCall[] = function($server) {};
-$server->onSuccess[]    = function($server) {};
-$server->onError[]      = function($server) {};
-```
-
-For detailed usage see comments with the server and clients class.
-For detailed tests see tests folder.
-
-### Client calls
-
-```php
-$url = 'http://api.domain.com/endpoint';
-
+$url    = 'http://api.domain.com/endpoint';
 $client = new Lightbulb\Json\Rpc2\Client($url);
-$client->upper("kitten");
-$client->firstTwo("Hello");
+
+$str = $client->upper("kitten");
+$id  = $client->getID("Jason Doolis");
 ```
 
 #### Client supports class chaining to call nested methods
 
 ```php
-$ok = $client->user->login($user, $pass);
-```
-
-will actually result in following json call:
-
-```php
-{... method: "user.login" ...}
+$ok = $client->user->mail->login($user, $pass); // Maps to 'user.mail.login'
 ```
 
 ## License
