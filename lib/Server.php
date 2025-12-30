@@ -15,7 +15,9 @@
 
 namespace Lightbulb\Json\Rpc2;
 
-require_once __DIR__ . '/exceptions.php';
+if(!class_exists('InvalidStateException',false)) {
+    class InvalidStateException extends Exception {}
+}
 
 /**
  * This is JSON-RPCv2 server handler class
