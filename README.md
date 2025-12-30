@@ -38,7 +38,8 @@ $server->handle();
 ```
 
 The methods, which are given to the server, can be then called via numbered
-or named parameters [json-rpc specification](http://groups.google.com/group/json-rpc/web/json-rpc-2-0?pli=1)
+or named parameters. More information available in the
+[JSON-RPC specification](https://www.jsonrpc.org/specification)
 
 The server class respects binding of event methods:
 
