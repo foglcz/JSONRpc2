@@ -1,28 +1,30 @@
 # JSON-RPC client and server libraries
 
-This library contains a PHP implementation of JSON-RPC version 2, both client and server.
+This library contains a PHP implementation of JSON-RPC version 2, both client
+and server.
 
 ## Installation
 
-Download the contents of the `lib` folder to your project. Then simply include the library:
+Download the contents of the `lib` folder to your project. Then simply include
+the library:
 
 ```php
 include "lib/Server.php";
 ```
 
-### Server methods
+### Server method examples
 
 ```php
 $server = new Lightbulb\Json\Rpc2\Server;
 
-// Class based where all the methods in myClass are exposed as user.method
+// Class based: All methods in myClass are exposed as user.method
 $server->user = new MyClass;
 
 // Anything that is "callable", either built in PHP functions or your own
 $server->upper     = 'strtoupper';
 $server->userClean = 'userClean';
 
-// Anonymous functions work too
+// Anonymous functions work also
 $server->firstTwo = function($str) { return substr($str,0,2); };
 
 // Force a namespace to map to an object method
@@ -30,10 +32,13 @@ $server->{'mytesthandler.myfunc'} = array($myObject, 'myMethod');
 
 // Static method calls work
 $server->myStaticHandler = 'MyStaticClass::theStaticFunction';
+
+// Receive and process any incoming RPC calls
+$server->handle();
 ```
 
 The methods, which are given to the server, can be then called via numbered
-or named parameters (see json-rpc specification here: http://groups.google.com/group/json-rpc/web/json-rpc-2-0?pli=1 )
+or named parameters [json-rpc specification](http://groups.google.com/group/json-rpc/web/json-rpc-2-0?pli=1)
 
 The server class respects binding of event methods:
 
@@ -51,7 +56,9 @@ For detailed tests see tests folder.
 ### Client calls
 
 ```php
-$client = new Lightbulb\Json\Rpc2\Client('http://api.domain.com/endpoint');
+$url = 'http://api.domain.com/endpoint';
+
+$client = new Lightbulb\Json\Rpc2\Client($url);
 $client->upper("kitten");
 $client->firstTwo("Hello");
 ```
@@ -69,4 +76,5 @@ will actually result in following json call:
 ```
 
 ## License
-Licensed under the New BSD License. Copyright 2011 Pavel Ptacek. All rights reserved.
+Licensed under the New BSD License. Copyright 2011 Pavel Ptacek.
+All rights reserved.
