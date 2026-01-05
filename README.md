@@ -3,6 +3,11 @@
 This library contains a PHP implementation of JSON-RPC version 2. This libraray
 implements both a client and a server.
 
+## Deprecation notice
+
+As of January 2026 this repository is in archive mode. Furher development of
+this library will take place [here](https://github.com/scottchiefbaker/php-JSON-RPC).
+
 ## Installation
 
 Download the contents of the `lib` folder to your project. Then simply include
@@ -30,14 +35,6 @@ $server->user = new MyClass;
 // Receive and process any incoming RPC calls
 $server->handle();
 ```
-
-More information in [advanced options](advanced-options.md) docs.
-
-#### Warning: Creation of dynamic property XYZ is deprecated
-
-Newer PHPs warn about creating dynamic properties on classes. If you add class
-methods to your server you will need to add `#[\AllowDynamicProperties]`
-before the class definition to work around this error.
 
 ### Client example
 
