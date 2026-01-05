@@ -3,7 +3,7 @@
 This library contains a PHP implementation of JSON-RPC version 2. This libraray
 implements both a client and a server.
 
-## Deprecation notice
+## ⛔‼️ Deprecation notice ‼️⛔
 
 As of January 2026 this repository is in archive mode. Furher development of
 this library will take place [here](https://github.com/scottchiefbaker/php-JSON-RPC).
